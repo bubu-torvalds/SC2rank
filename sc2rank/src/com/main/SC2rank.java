@@ -1,20 +1,9 @@
 package com.main;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
-
-import com.google.gson.*;
-
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.*;
 import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
-import java.nio.charset.CharsetEncoder;
 
 import org.apache.commons.io.IOUtils;
 
@@ -42,6 +31,13 @@ public class SC2rank {
 			 * Fun fact : need the battle.net id, but just works fine putting only a $ after the name...
 			 */
 			sc2.fetch_api("base/char/eu/bubutorvalds$");
+			//test base_character_team_infos
+			sc2.fetch_api("base/teams/eu/bubutorvalds$");
+			//test base_character_team_infos_members
+			sc2.fetch_api("char/teams/kr/TSLPolt$/1/0");
+			//test character search
+			sc2.fetch_api("search/exact/eu/pelicamp");
+			sc2.fetch_api("search/begins/kr/TSLPolt");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -75,7 +71,7 @@ public class SC2rank {
 	 * Let's you search for profiles to find a characters battle.net id, an exact duplicate of the "Profile Finder" tab. 
 	 * Replacement to allow you to search for characters without having the character code, or relying purely on names.
 	 *	
-	 * @param region Refer to the ladder's server. Valid regions are: us, eu, kr, tw, sea, ru and la
+	 * @param region Refers to the ladder's server. Valid regions are: us, eu, kr, tw, sea, ru and la
 	 * @param name Name of the profile we are looking for.
 	 * @param type Can be 1t, 2t, 3t, 4t, achieve. #t refers to team, so 1t is 1v1 team and so on, achieve refers to the characters achievements.
 	 * @param sub_type Can be points, wins, losses, division for #t, otherwise it's just points.
@@ -99,7 +95,7 @@ public class SC2rank {
 	/**
 	 * Minimum amount of character data, just gives achievement points, character code and battle.net id info.
 	 * 
-	 * @param region Refer to the ladder's server. Valid regions are: us, eu, kr, tw, sea, ru and la
+	 * @param region Refers to the ladder's server. Valid regions are: us, eu, kr, tw, sea, ru and la
 	 * @param name Name of the profile we are looking for.
 	 */
 	public void fetch_base_character(String region, String name){
@@ -112,8 +108,64 @@ public class SC2rank {
 		}
 	}
 	
-	public void fetch_base_character_team_info(String region, String name, int bracket, boolean random){
-		
+	/**
+	 * Includes base character data, as well as base data on all of the players teams. If you need team members you need the API below.
+	 * 
+	 * @param region Refers to the ladder's server. Valid regions are: us, eu, kr, tw, sea, ru and la
+	 * @param name Name of the profile we are looking for.
+	 */
+	public void fetch_base_character_team_info(String region, String name){
+		String request = "base/teams"+region+"/"+name;
+		try {
+			fetch_api(request);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Includes base character data, and extended team information for the passed bracket.
+	 * 
+	 * @param region Refers to the ladder's server. Valid regions are: us, eu, kr, tw, sea, ru and la
+	 * @param name Name of the profile we are looking for.
+	 * @param bracket Refers to 1v1, 2v2, 3v3 or 4v4. Values are therefore 1, 2, 3 or 4.
+	 * @param isRandom Do we want random teams or not. True or False.
+	 */
+	public void fetch_base_character_team_info_and_members(String region, String name, int bracket, boolean isRandom){
+		int random = 0;
+		if(isRandom){
+			random = 0;
+		} else {
+			random = 1;
+		}
+		String request = "char/teams/"+region+"/"+name+"/"+bracket+"/"+random;
+		try {
+			fetch_api(request);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Allows you to perform small searches, useful if you want to hookup an IRC bot or such. 
+	 * Only returns the first 10 names, but you can see the total number of characters and pass an offset if you need more. 
+	 * Search is case-insensitive.
+	 * 
+	 * @param search_type Can be exact, contains, starts, ends.
+	 * @param region Refers to the ladder's server. Valid regions are: us, eu, kr, tw, sea, ru and la
+	 * @param name Name of the profile we are looking for.
+	 * @param offset
+	 */
+	public void character_search(String search_type, String region, String name, String offset){
+		String request = "search/"+search_type+"/"+region+"/"+name;
+		try {
+			fetch_api(request);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
 	}
 	
 	public SC2rank(){}

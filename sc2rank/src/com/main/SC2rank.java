@@ -35,7 +35,13 @@ public class SC2rank {
 		SC2rank sc2 = new SC2rank();
 		sc2.init("test.com");
 		try {
+			//test profile_search
 			sc2.fetch_api("psearch/eu/bubutorvalds/1t/division/Scar");
+			/*
+			 * test base_character
+			 * Fun fact : need the battle.net id, but just works fine putting only a $ after the name...
+			 */
+			sc2.fetch_api("base/char/eu/bubutorvalds$");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

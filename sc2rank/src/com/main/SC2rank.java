@@ -168,5 +168,30 @@ public class SC2rank {
 		}		
 	}
 	
+	/**
+	 * Allows you to get everyone in a custom division.	
+	 * 
+	 * @param div_id
+	 * @param region
+	 * @param league
+	 * @param bracket
+	 * @param isRandomBracket
+	 */
+	public void list_custom_division(int div_id, String region, String league, int bracket, boolean isRandomBracket){
+		int random = 0;
+		if(isRandomBracket){
+			random = 0;
+		} else {
+			random = 1;
+		}
+		String request ="clist/"+div_id+"/"+region+"/"+league+"/"+bracket+"/"+random;
+		try {
+			fetch_api(request);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
+	}
+	
 	public SC2rank(){}
 }
